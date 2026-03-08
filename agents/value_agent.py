@@ -104,14 +104,17 @@ class ValueAgent:
         rate = rates.get(currency.upper(), 1.0)
         return amount * rate
     
-    def _get_estimated_hours(self, tech_analysis: Dict = None) -> int:
-        """获取预估工时"""
-        if tech_analysis:
-            return tech_analysis.get('estimated_hours', 16)
+    def _get_estimated_hours(self, tech_analysis=None) -> int:
+        """获取预估工时 - 支持传入字典或对象"""
+        if tech_analysis is None:
+            return 16
         
-        # 默认中等复杂度
-        complexity = tech_analysis.get('complexity', 'medium') if tech_analysis else 'medium'
-        return {'low': 4, 'medium': 16, 'high': 40}.get(complexity, 16)
+        # 处理可能是字典或对象的情况
+        if isinstance(tech_analysis, dict):
+            return tech_analysis.get('estimated_hours', 16)
+        else:
+            # 假设是 TechAnalysis 对象
+            return getattr(tech_analysis, 'estimated_hours', 16)
     
     def _identify_risk_factors(self, task: Dict, currency: str) -> List[str]:
         """识别风险因素"""
@@ -157,9 +160,9 @@ class ValueAgent:
     def _assess_risk_level(
         self, 
         risk_factors: List[str], 
-        competition_analysis: Dict = None
+        competition_analysis = None
     ) -> str:
-        """评估风险级别"""
+        """评估风险级别 - 支持传入字典或对象"""
         score = 0
         
         # 风险因素评分
@@ -173,11 +176,18 @@ class ValueAgent:
             elif 'abandoned' in risk.lower():
                 score += 3
         
-        # 竞争因素
+        # 竞争因素 - 处理对象或字典
         if competition_analysis:
-            if not competition_analysis.get('recommended', True):
+            if isinstance(competition_analysis, dict):
+                recommended = competition_analysis.get('recommended', True)
+                comp_level = competition_analysis.get('competition_level')
+            else:
+                recommended = getattr(competition_analysis, 'recommended', True)
+                comp_level = getattr(competition_analysis, 'competition_level', None)
+            
+            if not recommended:
                 score += 2
-            if competition_analysis.get('competition_level') == 'high':
+            if comp_level == 'high':
                 score += 2
         
         if score >= 4:
@@ -192,9 +202,9 @@ class ValueAgent:
         amount: float,
         hourly_rate: float,
         risk_level: str,
-        competition_analysis: Dict = None
+        competition_analysis = None
     ) -> float:
-        """计算价值分数 (0-10)"""
+        """计算价值分数 (0-10) - 支持传入字典或对象"""
         # 基础分数基于时薪
         if hourly_rate >= 50:
             base_score = 10
@@ -217,11 +227,16 @@ class ValueAgent:
         risk_penalty = {'low': 0, 'medium': -1, 'high': -2}
         base_score += risk_penalty.get(risk_level, 0)
         
-        # 竞争调整
+        # 竞争调整 - 处理对象或字典
         if competition_analysis:
-            if competition_analysis.get('competition_level') == 'low':
+            if isinstance(competition_analysis, dict):
+                comp_level = competition_analysis.get('competition_level')
+            else:
+                comp_level = getattr(competition_analysis, 'competition_level', None)
+            
+            if comp_level == 'low':
                 base_score += 0.5
-            elif competition_analysis.get('competition_level') == 'high':
+            elif comp_level == 'high':
                 base_score -= 1
         
         return max(0, min(10, base_score))
