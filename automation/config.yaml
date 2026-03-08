@@ -1,0 +1,90 @@
+# KK-17 自动化赏金猎人配置
+
+# 搜索配置
+search:
+  min_bounty: 20
+  max_tasks_per_search: 30
+  platforms:
+    - github
+    - issuehunt
+  languages:
+    - python
+    - javascript
+    - typescript
+    - go
+
+# 筛选条件
+filters:
+  # 货币要求
+  allowed_currencies:
+    - USD
+    - USDC
+    - EUR
+    - GBP
+  
+  # 状态要求
+  require_status: open
+  
+  # 排除条件
+  exclude:
+    - requires_hardware
+    - requires_windows
+    - requires_mac
+    - crypto_payment_only
+  
+  # 竞争检查
+  max_open_prs: 0  # 无竞争
+  check_pr_quality: true  # 检查已有PR是否解决问题
+
+# 自动开发配置
+development:
+  auto_start: true
+  max_concurrent: 3  # 最大并发开发任务
+  time_limit_hours: 4  # 每个任务时间限制
+  
+  # 技术栈匹配
+  preferred_languages:
+    - python
+    - javascript
+    - typescript
+  
+  # 自动测试
+  run_tests: true
+  test_frameworks:
+    - pytest
+    - jest
+
+# JIRA 配置
+jira:
+  project_key: KK
+  auto_create: true
+  assignee: "712020:9f1f3146-71de-42dd-908b-612a0226866a"
+  labels:
+    - bounty
+    - auto-generated
+
+# GitHub 配置
+github:
+  username: Kiki-bo-zhang
+  email: kiki.bot2026@gmail.com
+  auto_submit_pr: true
+  pr_template: |
+    ## Description
+    {description}
+    
+    ## Changes
+    {changes}
+    
+    Fixes #{issue_number}
+
+# 邮件汇报
+email:
+  enabled: true
+  recipient: bowardzhang@gmail.com
+  schedule: "0 20 * * *"  # 每天 20:00
+  template: daily_report
+
+# 目标
+targets:
+  daily_tasks_goal: 10
+  hourly_search: true
