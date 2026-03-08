@@ -121,18 +121,19 @@ class BountyTaskIR:
     def from_task_and_analyses(
         cls,
         task: Dict,
-        tech_analysis: Dict,
-        competition_analysis: Dict,
-        value_assessment: Dict
+        tech_analysis,
+        competition_analysis,
+        value_assessment
     ) -> 'BountyTaskIR':
         """
         从原始任务和 Agent 分析结果创建 IR
+        支持传入字典或对象
         
         Args:
             task: 原始任务字典
-            tech_analysis: AnalysisAgent 结果
-            competition_analysis: CompetitionAgent 结果
-            value_assessment: ValueAgent 结果
+            tech_analysis: AnalysisAgent 结果 (dict or TechAnalysis)
+            competition_analysis: CompetitionAgent 结果 (dict or CompetitionAnalysis)
+            value_assessment: ValueAgent 结果 (dict or ValueAssessment)
         
         Returns:
             BountyTaskIR: 中间表示对象
@@ -142,33 +143,67 @@ class BountyTaskIR:
             currency=task.get('bounty', {}).get('currency', 'UNKNOWN')
         )
         
-        tech = TechAnalysisIR(
-            tech_match_score=tech_analysis.get('tech_match_score', 0),
-            complexity=tech_analysis.get('complexity', 'medium'),
-            feasibility=tech_analysis.get('feasibility', 0),
-            estimated_hours=tech_analysis.get('estimated_hours', 16),
-            required_skills=tech_analysis.get('required_skills', []),
-            blockers=tech_analysis.get('blockers', [])
-        )
+        # 处理 tech_analysis (支持 dict 或对象)
+        if isinstance(tech_analysis, dict):
+            tech = TechAnalysisIR(
+                tech_match_score=tech_analysis.get('tech_match_score', 0),
+                complexity=tech_analysis.get('complexity', 'medium'),
+                feasibility=tech_analysis.get('feasibility', 0),
+                estimated_hours=tech_analysis.get('estimated_hours', 16),
+                required_skills=tech_analysis.get('required_skills', []),
+                blockers=tech_analysis.get('blockers', [])
+            )
+        else:
+            tech = TechAnalysisIR(
+                tech_match_score=getattr(tech_analysis, 'tech_match_score', 0),
+                complexity=getattr(tech_analysis, 'complexity', 'medium'),
+                feasibility=getattr(tech_analysis, 'feasibility', 0),
+                estimated_hours=getattr(tech_analysis, 'estimated_hours', 16),
+                required_skills=getattr(tech_analysis, 'required_skills', []),
+                blockers=getattr(tech_analysis, 'blockers', [])
+            )
         
-        comp = CompetitionAnalysisIR(
-            open_prs_count=competition_analysis.get('open_prs_count', 0),
-            pr_authors=competition_analysis.get('pr_authors', []),
-            maintainer_active=competition_analysis.get('maintainer_active', False),
-            last_activity_days=competition_analysis.get('last_activity_days', 999),
-            competition_level=competition_analysis.get('competition_level', 'unknown'),
-            recommended=competition_analysis.get('recommended', False),
-            notes=competition_analysis.get('notes', [])
-        )
+        # 处理 competition_analysis
+        if isinstance(competition_analysis, dict):
+            comp = CompetitionAnalysisIR(
+                open_prs_count=competition_analysis.get('open_prs_count', 0),
+                pr_authors=competition_analysis.get('pr_authors', []),
+                maintainer_active=competition_analysis.get('maintainer_active', False),
+                last_activity_days=competition_analysis.get('last_activity_days', 999),
+                competition_level=competition_analysis.get('competition_level', 'unknown'),
+                recommended=competition_analysis.get('recommended', False),
+                notes=competition_analysis.get('notes', [])
+            )
+        else:
+            comp = CompetitionAnalysisIR(
+                open_prs_count=getattr(competition_analysis, 'open_prs_count', 0),
+                pr_authors=getattr(competition_analysis, 'pr_authors', []),
+                maintainer_active=getattr(competition_analysis, 'maintainer_active', False),
+                last_activity_days=getattr(competition_analysis, 'last_activity_days', 999),
+                competition_level=getattr(competition_analysis, 'competition_level', 'unknown'),
+                recommended=getattr(competition_analysis, 'recommended', False),
+                notes=getattr(competition_analysis, 'notes', [])
+            )
         
-        value = ValueAssessmentIR(
-            value_score=value_assessment.get('value_score', 0),
-            risk_level=value_assessment.get('risk_level', 'high'),
-            risk_factors=value_assessment.get('risk_factors', []),
-            hourly_rate=value_assessment.get('hourly_rate', 0),
-            recommendation=value_assessment.get('recommendation', 'avoid'),
-            notes=value_assessment.get('notes', [])
-        )
+        # 处理 value_assessment
+        if isinstance(value_assessment, dict):
+            value = ValueAssessmentIR(
+                value_score=value_assessment.get('value_score', 0),
+                risk_level=value_assessment.get('risk_level', 'high'),
+                risk_factors=value_assessment.get('risk_factors', []),
+                hourly_rate=value_assessment.get('hourly_rate', 0),
+                recommendation=value_assessment.get('recommendation', 'avoid'),
+                notes=value_assessment.get('notes', [])
+            )
+        else:
+            value = ValueAssessmentIR(
+                value_score=getattr(value_assessment, 'value_score', 0),
+                risk_level=getattr(value_assessment, 'risk_level', 'high'),
+                risk_factors=getattr(value_assessment, 'risk_factors', []),
+                hourly_rate=getattr(value_assessment, 'hourly_rate', 0),
+                recommendation=getattr(value_assessment, 'recommendation', 'avoid'),
+                notes=getattr(value_assessment, 'notes', [])
+            )
         
         # 计算最终分数
         final_score = cls._calculate_final_score(tech, comp, value)
