@@ -328,6 +328,14 @@ filters:
     - requires_windows
     - requires_mac
   
+  # 排除的项目/作者（明确排斥AI生成代码）
+  excluded_repos:
+    - TriliumNext/Trilium
+    - TriliumNext/*
+  
+  excluded_owners:
+    - TriliumNext
+  
   # 竞争检查 - 保持最多3个高质量PR
   max_open_prs: 3
   check_pr_quality: true
