@@ -2,25 +2,46 @@
 
 # 搜索配置
 search:
-  min_bounty: 20
-  max_tasks_per_search: 30
+  min_bounty: 10  # 降低到 $10
+  max_tasks_per_search: 50  # 增加搜索数量
   platforms:
     - github
     - issuehunt
+    - gitcoin
+    - bountysource
   languages:
     - python
     - javascript
     - typescript
     - go
+    - rust
+    - solidity
 
 # 筛选条件
 filters:
-  # 货币要求
+  # 货币要求 - 扩展接受主流虚拟货币
   allowed_currencies:
     - USD
     - USDC
     - EUR
     - GBP
+    # 主流虚拟货币
+    - BTC
+    - ETH
+    - SOL
+    - MATIC
+    - AVAX
+    - BNB
+    - ARB
+    - OP
+    # 稳定币
+    - DAI
+    - USDT
+    # 项目代币（知名项目）
+    - UNI
+    - AAVE
+    - LINK
+    - CRV
   
   # 状态要求
   require_status: open
@@ -30,7 +51,7 @@ filters:
     - requires_hardware
     - requires_windows
     - requires_mac
-    - crypto_payment_only
+    # 移除 crypto_payment_only 限制，接受主流虚拟货币
   
   # 竞争检查 - 放宽到最多3个PR，但检查PR质量
   max_open_prs: 3
@@ -56,6 +77,8 @@ development:
     - python
     - javascript
     - typescript
+    - rust
+    - solidity
   
   # 自动测试
   run_tests: true

@@ -88,17 +88,32 @@ class ValueAgent:
         )
     
     def _normalize_to_usd(self, amount: float, currency: str) -> float:
-        """将其他货币转换为 USD 估算"""
+        """将其他货币转换为 USD 估算 - 包含主流虚拟货币"""
         # 简化汇率（实际应使用实时汇率 API）
         rates = {
             'USD': 1.0,
             'USDC': 1.0,
+            'USDT': 1.0,
+            'DAI': 1.0,
             'EUR': 1.08,
             'GBP': 1.27,
-            'CNY': 0.14,
-            'JPY': 0.0067,
-            'RTC': 0.10,  # RustChain Token
-            'LTD': 0.005,  # La Tanda Token (假设)
+            # 主流虚拟货币 (使用近似值)
+            'BTC': 85000,      # ~$85,000
+            'ETH': 2200,       # ~$2,200
+            'SOL': 130,        # ~$130
+            'MATIC': 0.40,     # ~$0.40
+            'AVAX': 20,        # ~$20
+            'BNB': 600,        # ~$600
+            'ARB': 0.50,       # ~$0.50
+            'OP': 1.00,        # ~$1.00
+            # DeFi 代币
+            'UNI': 7.0,        # ~$7.00
+            'AAVE': 100,       # ~$100
+            'LINK': 15,        # ~$15
+            'CRV': 0.50,       # ~$0.50
+            # 项目代币
+            'RTC': 0.10,       # RustChain Token
+            'LTD': 0.005,      # La Tanda Token
         }
         
         rate = rates.get(currency.upper(), 1.0)
@@ -120,13 +135,22 @@ class ValueAgent:
         """识别风险因素"""
         risks = []
         
-        # 货币风险
-        stable_currencies = ['USD', 'USDC', 'EUR', 'GBP']
-        if currency not in stable_currencies:
-            if currency in ['RTC', 'LTD', 'KARMA']:
-                risks.append(f"Token payment ({currency}) - value may fluctuate")
-            else:
-                risks.append(f"Non-standard currency: {currency}")
+        # 货币风险评估
+        stable_currencies = ['USD', 'USDC', 'USDT', 'DAI', 'EUR', 'GBP']
+        major_crypto = ['BTC', 'ETH', 'SOL', 'MATIC', 'AVAX', 'BNB', 'ARB', 'OP']
+        defi_tokens = ['UNI', 'AAVE', 'LINK', 'CRV']
+        
+        if currency.upper() in stable_currencies:
+            pass  # 稳定币，无风险
+        elif currency.upper() in major_crypto:
+            # 主流虚拟货币，低风险
+            pass
+        elif currency.upper() in defi_tokens:
+            risks.append(f"DeFi token ({currency}) - moderate volatility")
+        elif currency.upper() in ['RTC', 'LTD', 'KARMA']:
+            risks.append(f"Project-specific token ({currency}) - liquidity risk")
+        else:
+            risks.append(f"Unknown currency: {currency} - verify before accepting")
         
         # 金额风险
         bounty = task.get('bounty', {})
