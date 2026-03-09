@@ -2,6 +2,7 @@
 """
 KK-17 自动化赏金猎人主控器
 每小时执行：搜索 → 评估 → 开发 → 提交
+集成 program.md 编程和自我进化循环
 """
 import os
 import sys
@@ -22,10 +23,23 @@ from agents.competition_agent import CompetitionAgent
 from agents.value_agent import ValueAgent
 from ir.schema import BountyTaskIR
 
+# Program.md 路径
+PROGRAM_MD_PATH = Path('/root/.openclaw/workspace/AGENT_PROGRAM.md')
+
+def load_program_context() -> str:
+    """加载 program.md 作为系统上下文"""
+    if PROGRAM_MD_PATH.exists():
+        return PROGRAM_MD_PATH.read_text()
+    return ""
+
 class KK17AutoBountyHunter:
-    """KK-17 自动化赏金猎人"""
+    """KK-17 自动化赏金猎人 - 基于 program.md 编程"""
     
     def __init__(self):
+        # 加载 program.md
+        self.program_context = load_program_context()
+        print("📝 Loaded AGENT_PROGRAM.md")
+        
         self.config = self._load_config()
         self.github_token = os.environ.get('GITHUB_TOKEN')
         self.jira_token = os.environ.get('JIRA_TOKEN')
@@ -42,6 +56,9 @@ class KK17AutoBountyHunter:
         )
         self.value_agent = ValueAgent(self.config)
         
+        # 初始化自我进化
+        self._init_self_evolution()
+        
         # 统计
         self.stats = {
             'searched': 0,
@@ -50,6 +67,16 @@ class KK17AutoBountyHunter:
             'submitted': 0,
             'errors': []
         }
+    
+    def _init_self_evolution(self):
+        """初始化自我进化系统"""
+        try:
+            from automation.self_evolution import SelfEvolution
+            self.evolution = SelfEvolution()
+            print("🧠 Self-evolution system ready")
+        except Exception as e:
+            print(f"⚠️  Self-evolution init failed: {e}")
+            self.evolution = None
     
     def _load_config(self) -> Dict:
         """加载配置"""
@@ -62,6 +89,15 @@ class KK17AutoBountyHunter:
         print("=" * 70)
         print(f"🎯 KK-17 Auto Bounty Hunter - {datetime.now().strftime('%Y-%m-%d %H:%M')}")
         print("=" * 70)
+        
+        # 显示 program.md 摘要
+        if self.program_context:
+            lines = self.program_context.split('\n')[:5]
+            print("\n📋 Program.md Summary:")
+            for line in lines:
+                if line.strip():
+                    print(f"   {line}")
+            print()
         
         # Step 1: 搜索
         tasks = self._search_tasks()
@@ -81,13 +117,41 @@ class KK17AutoBountyHunter:
         
         # Step 3: 自动开发
         for task_ir in qualified_tasks[:self.config['development']['max_concurrent']]:
+            start_time = time.time()
             try:
                 self._auto_develop(task_ir)
                 self.stats['developed'] += 1
+                
+                # 记录成功到自我进化系统
+                if self.evolution:
+                    self.evolution.record_task_completion(
+                        task_ir.task_id,
+                        task_ir.to_dict(),
+                        success=True,
+                        duration=time.time() - start_time
+                    )
             except Exception as e:
                 error_msg = f"Development failed for {task_ir.task_id}: {str(e)}"
                 print(f"❌ {error_msg}")
                 self.stats['errors'].append(error_msg)
+                
+                # 记录失败到自我进化系统
+                if self.evolution:
+                    self.evolution.record_task_completion(
+                        task_ir.task_id,
+                        task_ir.to_dict(),
+                        success=False,
+                        duration=time.time() - start_time,
+                        failure_reason=str(e)
+                    )
+        
+        # Step 4: 如果是 20:00，运行自我进化
+        if datetime.now().hour == 20 and self.evolution:
+            print("\n🧠 Running self-evolution cycle...")
+            try:
+                self.evolution.run_daily_evolution()
+            except Exception as e:
+                print(f"⚠️  Evolution cycle failed: {e}")
         
         return self.stats
     
