@@ -36,7 +36,10 @@ class KK17AutoBountyHunter:
         # 初始化 Agent
         self.search_agent = SearchAgent(self.github_token, self.config.get('search', {}))
         self.analysis_agent = AnalysisAgent(config=self.config.get('search', {}))
-        self.competition_agent = CompetitionAgent(self.github_token)
+        self.competition_agent = CompetitionAgent(
+            self.github_token, 
+            config=self.config.get('filters', {})
+        )
         self.value_agent = ValueAgent(self.config)
         
         # 统计
@@ -127,11 +130,22 @@ class KK17AutoBountyHunter:
                 print(f"    ❌ Skipped: Low feasibility ({tech.feasibility:.0%})")
                 continue
             
-            # 3. 竞争分析
+            # 3. 竞争分析（含PR质量检查）
             comp = self.competition_agent.analyze_competition(task)
-            if comp.open_prs_count > filters['max_open_prs']:
-                print(f"    ❌ Skipped: Has {comp.open_prs_count} competing PRs")
+            
+            # 使用高质量PR数量判断竞争（而非总PR数）
+            high_quality_prs = comp.high_quality_prs
+            max_allowed_prs = filters['max_open_prs']  # 现在是 3
+            
+            if high_quality_prs > max_allowed_prs:
+                print(f"    ❌ Skipped: Has {high_quality_prs} high-quality competing PRs (max {max_allowed_prs})")
                 continue
+            elif high_quality_prs > 0:
+                print(f"    ⚠️ Warning: Has {high_quality_prs} high-quality PR(s), but within limit")
+            
+            # 显示PR质量详情
+            if comp.low_quality_prs > 0:
+                print(f"    ℹ️  {comp.low_quality_prs} low-quality PR(s) - not a threat")
             
             # 4. 价值评估
             value = self.value_agent.assess_value(task, tech.to_dict(), comp.to_dict())

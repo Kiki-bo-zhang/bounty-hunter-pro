@@ -32,9 +32,18 @@ filters:
     - requires_mac
     - crypto_payment_only
   
-  # 竞争检查
-  max_open_prs: 0  # 无竞争
-  check_pr_quality: true  # 检查已有PR是否解决问题
+  # 竞争检查 - 放宽到最多3个PR，但检查PR质量
+  max_open_prs: 3
+  check_pr_quality: true
+  
+  # PR质量评估标准
+  pr_quality_threshold:
+    # PR超过7天无更新视为低质量/abandoned
+    stale_days: 7
+    # PR描述少于50字符视为低质量
+    min_description_length: 50
+    # 检查PR是否为draft
+    skip_drafts: true
 
 # 自动开发配置
 development:
