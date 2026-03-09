@@ -12,6 +12,6 @@ if [ -z "$GITHUB_TOKEN" ]; then
     exit 1
 fi
 
-# 启动赏金猎人
+# 启动赏金猎人（使用集成 program.md 和自我进化的新版本）
 cd "$SCRIPT_DIR/.."
-python3 automation/kk17_auto_hunter.py >> automation/logs/hourly.log 2>&1
+python3 automation/kimi_hunter.py >> automation/logs/hourly.log 2>&1
