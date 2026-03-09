@@ -178,17 +178,40 @@ class KK17AutoBountyHunter:
         return qualified
     
     def _auto_develop(self, task_ir: BountyTaskIR):
-        """自动开发任务"""
+        """自动开发任务 - 只有成功后才保留JIRA"""
         print(f"\n🚀 Step 3: Auto-developing {task_ir.task_id}...")
         
-        # 1. 创建 JIRA 任务
-        jira_key = self._create_jira_task(task_ir)
-        print(f"  ✅ JIRA created: {jira_key}")
-        
-        # 2. Fork 仓库
-        repo = task_ir.repo
-        self._fork_repository(repo)
-        print(f"  ✅ Forked: {repo}")
+        jira_key = None
+        try:
+            # 1. Fork 仓库（必须先有fork才能推送代码）
+            repo = task_ir.repo
+            self._fork_repository(repo)
+            print(f"  ✅ Forked: {repo}")
+            
+            # 2. 先尝试开发
+            result = self._ai_develop(task_ir)
+            
+            if not result['success']:
+                print(f"  ❌ Development failed: {result.get('error')}")
+                return  # 开发失败，不创建JIRA
+            
+            # 3. 开发成功后才创建JIRA
+            jira_key = self._create_jira_task(task_ir)
+            print(f"  ✅ JIRA created: {jira_key}")
+            
+            # 4. 提交 PR
+            pr_url = self._submit_pr(task_ir, result)
+            print(f"  ✅ PR submitted: {pr_url}")
+            self.stats['submitted'] += 1
+            
+            # 5. 更新 JIRA
+            self._update_jira(jira_key, pr_url)
+            
+        except Exception as e:
+            print(f"  ❌ Error: {e}")
+            # 如果创建了JIRA但后续失败，可以考虑删除或标记
+            if jira_key:
+                print(f"  ⚠️  JIRA {jira_key} created but PR submission failed")
         
         # 3. 调用 AI 开发 Agent
         result = self._ai_develop(task_ir)
