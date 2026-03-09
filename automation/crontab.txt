@@ -1,15 +1,16 @@
 # KK-17 自动化赏金猎人 Cron 配置
-# 包含 program.md 编程范式和自我进化循环
-
 SHELL=/bin/bash
-PATH=/usr/local/bin:/usr/bin:/bin
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 HOME=/root
 
-# 每小时执行赏金猎人（使用新的 kimi_hunter.py）
-0 * * * * cd /root/.openclaw/workspace/projects/bounty-hunter-pro && source .env && /usr/bin/python3 automation/kimi_hunter.py >> /root/.openclaw/workspace/projects/bounty-hunter-pro/automation/logs/hourly.log 2>&1
+# 加载环境变量
+BASH_ENV=/root/.openclaw/workspace/projects/bounty-hunter-pro/.env
 
-# 每天 20:00 运行自我进化循环
-0 20 * * * cd /root/.openclaw/workspace/projects/bounty-hunter-pro && source .env && /usr/bin/python3 automation/self_evolution.py >> /root/.openclaw/workspace/projects/bounty-hunter-pro/automation/logs/evolution.log 2>&1
+# 1. 每小时执行赏金猎人（使用启动脚本确保环境变量加载）
+0 * * * * cd /root/.openclaw/workspace/projects/bounty-hunter-pro && bash automation/run_hunter.sh >> /root/.openclaw/workspace/projects/bounty-hunter-pro/automation/logs/cron.log 2>&1
 
-# 清理日志（每周一次）
+# 2. 每天 09:00 执行赚钱机会搜索
+0 9 * * * cd /root/.openclaw/workspace/projects/bounty-hunter-pro && bash automation/run_hunter.sh >> /root/.openclaw/workspace/projects/bounty-hunter-pro/automation/logs/cron.log 2>&1
+
+# 3. 清理日志（每周一次）
 0 0 * * 0 find /root/.openclaw/workspace/projects/bounty-hunter-pro/automation/logs -name "*.log" -mtime +7 -delete
