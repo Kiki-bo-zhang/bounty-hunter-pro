@@ -7,8 +7,6 @@ search:
   platforms:
     - github
     - issuehunt
-    - gitcoin
-    - bountysource
   languages:
     - python
     - javascript
@@ -25,7 +23,7 @@ filters:
     - USDC
     - EUR
     - GBP
-    # 主流虚拟货币
+    # 主流加密货币
     - BTC
     - ETH
     - SOL
@@ -37,42 +35,315 @@ filters:
     # 稳定币
     - DAI
     - USDT
-    # 项目代币（知名项目）
+    # DeFi代币
     - UNI
     - AAVE
     - LINK
     - CRV
+    - COMP
+    - MKR
+    - SNX
+    - YFI
+    # 其他主流代币
+    - DOT
+    - ADA
+    - XRP
+    - DOGE
+    - SHIB
+    - LTC
+    - BCH
+    - XLM
+    - EOS
+    - TRX
+    - VET
+    - FIL
+    - THETA
+    - XMR
+    - IOTA
+    - NEO
+    - DASH
+    - ETC
+    - ZEC
+    - XEM
+    - WAVES
+    - ZIL
+    - ICX
+    - OMG
+    - QTUM
+    - BAT
+    - LSK
+    - SC
+    - DCR
+    - BCN
+    - STEEM
+    - XVG
+    - STRAT
+    - BTS
+    - SBD
+    - KMD
+    - ARDR
+    - REP
+    - MAID
+    - GNT
+    - BNT
+    - CVC
+    - STORJ
+    - PAY
+    - DGD
+    - SNGLS
+    - 1ST
+    - ANT
+    - WINGS
+    - MLN
+    - GNO
+    - DNT
+    - LUN
+    - HMQ
+    - BCAP
+    - TAAS
+    - TIME
+    - XAUR
+    - SWT
+    - PLU
+    - GUP
+    - CFI
+    - DICE
+    - RLT
+    - HGT
+    - vSlice
+    - EDG
+    - AERO
+    - REAL
+    - MSP
+    - DRP
+    - PLBT
+    - GVT
+    - IND
+    - FLP
+    - BETR
+    - RVT
+    - STX
+    - FARAD
+    - ATL
+    - WPR
+    - DRT
+    - GLA
+    - NTK
+    - HAC
+    - AIX
+    - BANCA
+    - LDC
+    - HERO
+    - OPEN
+    - PAT
+    - LEDU
+    - REDC
+    - NUSD
+    - COV
+    - BRD
+    - TIO
+    - ZAP
+    - MTN
+    - CEEK
+    - PCL
+    - GBX
+    - FXT
+    - NOX
+    - J8T
+    - LNC
+    - AXPR
+    - FID
+    - FLIXX
+    - RBLX
+    - NGC
+    - ELEC
+    - BAX
+    - FTX
+    - HT
+    - OKB
+    - LEO
+    - CRO
+    - FTT
+    - KCS
+    - HT
+    - BNB
+    - GT
+    - MX
+    - BIX
+    - ZB
+    - QKC
+    - LAMB
+    - IOTX
+    - ANKR
+    - CELR
+    - ONE
+    - ALGO
+    - ATOM
+    - FTM
+    - NEAR
+    - EGLD
+    - HBAR
+    - FLOW
+    - KSM
+    - OCEAN
+    - STMX
+    - CHZ
+    - ENJ
+    - MANA
+    - SAND
+    - AXS
+    - GALA
+    - ILV
+    - YGG
+    - AUDIO
+    - RARI
+    - SUPER
+    - WHALE
+    - SUSHI
+    - CAKE
+    - BAKE
+    - BURGER
+    - AUTO
+    - ALPACA
+    - XVS
+    - VAI
+    - EPS
+    - BELT
+    - MDX
+    - BUNNY
+    - JULD
+    - JGN
+    - DODO
+    - PNT
+    - TPT
+    - SWINGBY
+    - FRONT
+    - LIT
+    - DEGO
+    - DEXE
+    - OIN
+    - OM
+    - ALPHA
+    - INJ
+    - FET
+    - AGIX
+    - NU
+    - KEEP
+    - TBTC
+    - REN
+    - BADGER
+    - BOR
+    - ROOK
+    - FXS
+    - FIS
+    - XTZ
+    - XEC
+    - ICP
+    - MINA
+    - ROSE
+    - SC
+    - STORJ
+    - SXP
+    - XYM
+    - AR
+    - LPT
+    - GRT
+    - 1INCH
+    - MIR
+    - PERP
+    - DODO
+    - BAL
+    - REN
+    - GNO
+    - MLN
+    - UMA
+    - LRC
+    - CEL
+    - NEXO
+    - CEL
+    - VGX
+    - LDO
+    - ROCKET
+    - STETH
+    - CBETH
+    - RETH
+    - ANKRETH
+    - SETH2
+    - WETH
+    - WSTETH
+    - WBTC
+    - RENBTC
+    - HBTC
+    - SBTC
+    - IMBTC
+    - PBTC
+    - OBTC
+    - BTCB
+    - BTG
+    - BSV
+    - BTCD
+    - XBT
+    - DGB
+    - DCR
+    - DASH
+    - ZEC
+    - XMR
+    - XVG
+    - DOGE
+    - SHIB
+    - AKITA
+    - KISHU
+    - FLOKI
+    - ELON
+    - SAMO
+    - BONK
+    - PEPE
+    - WOJAK
+    - MEME
+    - DOBO
+    - SAITAMA
+    - LEASH
+    - BONE
+    - TREAT
+    - SHIB
+    - DOGE
+    - ELON
+    - SAMO
+    - BONK
+    - PEPE
+    - WOJAK
+    - MEME
+    - DOBO
+    - SAITAMA
+    - LEASH
+    - BONE
+    - TREAT
   
   # 状态要求
   require_status: open
   
-  # 排除条件
+  # 排除条件（移除crypto_payment_only限制）
   exclude:
     - requires_hardware
     - requires_windows
     - requires_mac
-    # 移除 crypto_payment_only 限制，接受主流虚拟货币
   
-  # 竞争检查 - 放宽到最多3个PR，但检查PR质量
+  # 竞争检查 - 保持最多3个高质量PR
   max_open_prs: 3
   check_pr_quality: true
   
-  # PR质量评估标准
+  # PR质量阈值
   pr_quality_threshold:
-    # PR超过7天无更新视为低质量/abandoned
     stale_days: 7
-    # PR描述少于50字符视为低质量
     min_description_length: 50
-    # 检查PR是否为draft
     skip_drafts: true
 
 # 自动开发配置
 development:
   auto_start: true
-  max_concurrent: 3  # 最大并发开发任务
-  time_limit_hours: 4  # 每个任务时间限制
+  max_concurrent: 3
+  time_limit_hours: 4
   
-  # 技术栈匹配
   preferred_languages:
     - python
     - javascript
@@ -80,11 +351,12 @@ development:
     - rust
     - solidity
   
-  # 自动测试
   run_tests: true
   test_frameworks:
     - pytest
     - jest
+    - hardhat
+    - foundry
 
 # JIRA 配置
 jira:
@@ -113,7 +385,7 @@ github:
 email:
   enabled: true
   recipient: bowardzhang@gmail.com
-  schedule: "0 20 * * *"  # 每天 20:00
+  schedule: "0 20 * * *"
   template: daily_report
 
 # 目标
